@@ -198,3 +198,10 @@ class Game:
             if not self.score[cate]["scored"]:
                 return False
         return True
+
+    def get_final_score(self):
+        total = 0
+        for cate in self.score:
+            total += self.score[cate]["value"]
+            print("Category: %s, Score: %d\n" %(cate, self.score[cate]["value"]))
+        print("Total Score: %d" % total)
