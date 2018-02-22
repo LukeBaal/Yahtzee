@@ -35,6 +35,7 @@ def roll_test(p):
 
     p.assertTrue(actual, "Roll returned 3 integers between 1 and 6")
 
+
 def score_test(p):
     game = Game()
 
@@ -57,14 +58,18 @@ def score_test(p):
     p.assertEquals(game.get_score("full house"), 25, "Full house test")
 
     # Short straight
-    p.assertEquals(game.get_score("short straight"), 0, "invalid short straight test")
+    p.assertEquals(game.get_score("small straight"),
+                   0, "invalid small straight test")
     game.pot = [1, 3, 4, 5, 6]
-    p.assertEquals(game.get_score("short straight"), 30, "valid short straight test")
-    
+    p.assertEquals(game.get_score("small straight"),
+                   30, "valid small straight test")
+
     # Long straight
-    p.assertEquals(game.get_score("long straight"), 0, "invalid long straight test")
+    p.assertEquals(game.get_score("large straight"),
+                   0, "invalid large straight test")
     game.pot = [1, 2, 3, 4, 5]
-    p.assertEquals(game.get_score("long straight"), 40, "valid long straight test")
+    p.assertEquals(game.get_score("large straight"),
+                   40, "valid large straight test")
 
     # Chance
     p.assertEquals(game.get_score("chance"), 15, "Chance test")
@@ -77,6 +82,7 @@ def score_test(p):
     game.pot = [3, 3, 2, 4, 1]
     p.assertEquals(game.get_score("yahtzee"), 0, "Invalid yahtzee score test")
 
+
 def update_score_test(p):
     game = Game()
 
@@ -84,7 +90,8 @@ def update_score_test(p):
     score = 50
     cate = "yahtzee"
     p.assertTrue(game.update_score(cate, score), "First yahtzee scored test")
-    p.assertEquals(game.score[cate]["value"], score, "Update yahtzee score test")
+    p.assertEquals(game.score[cate]["value"], score,
+                   "Update yahtzee score test")
 
     # Second yahtzee
     p.assertTrue(game.update_score(cate, score), "Second yahtzee scored test")
@@ -99,8 +106,10 @@ def update_score_test(p):
     # Attempt at scoring ones a second time
     score = 4
     prev_score = game.score[cate]["value"]
-    p.assertFalse(game.update_score(cate, score), "Second ones score attempt test")
-    p.assertEquals(game.score[cate]["value"], prev_score, "Second ones score test")
+    p.assertFalse(game.update_score(cate, score),
+                  "Second ones score attempt test")
+    p.assertEquals(game.score[cate]["value"],
+                   prev_score, "Second ones score test")
 
     # Attempt to score a yahtzee after scratching the first yahtzee (score of 0)
     game = Game()
@@ -111,8 +120,10 @@ def update_score_test(p):
 
     # Attempt second yahtzee (should not be scored, despite valid)
     score = 50
-    p.assertFalse(game.update_score(cate, score), "Yahtzee scored attempt after scratch test")
-    p.assertEquals(game.score[cate]["value"], 0, "Yahtzee score after atempt after scratch test")
+    p.assertFalse(game.update_score(cate, score),
+                  "Yahtzee scored attempt after scratch test")
+    p.assertEquals(game.score[cate]["value"], 0,
+                   "Yahtzee score after atempt after scratch test")
 
     # Bonus pts test
     p.assertEquals(game.score[cate]["value"], 0, "No bonus test")
@@ -121,25 +132,45 @@ def update_score_test(p):
     p.assertTrue(game.update_score("fours", 20), "Update fours for bonus test")
     cate = "bonus"
     p.assertEquals(game.score[cate]["value"], 35, "Bonus score test")
-   
+
+
 def parse_input_test(p):
     game = Game()
 
     # Valid hold command
     text = "roll 1 2 4"
-    p.assertEquals(game.parse_input(text), ("roll", [1, 2, 4]), "Valid roll command test")
+    p.assertEquals(game.parse_input(text), ("roll", [
+                   1, 2, 4]), "Valid roll command test")
 
     # Invalid hold command
-    text = "roll 1,2,4"
-    p.assertEquals(game.parse_input(text), (None, None), "Invalid roll command test")
+    text = "roll full house"
+    p.assertEquals(game.parse_input(text), (None, None),
+                   "Invalid roll command test")
 
     # Valid score command
     text = "score full house"
-    p.assertEquals(game.parse_input(text), ("score", "full house"), "Valid score command test")
+    p.assertEquals(game.parse_input(text),
+                   ("score", "full house"), "Valid score command test")
 
     # Invalid score command
     text = "score 1 2 4"
-    p.assertEquals(game.parse_input(text), (None, None), "Invalid score command test")
+    p.assertEquals(game.parse_input(text), (None, None),
+                   "Invalid score command test")
+
+
+def is_game_over_test(p):
+    game = Game()
+
+    # Not all categoried scored, game is not over
+    p.assertFalse(game.is_game_over(), "Game is not over test")
+
+    # Set scored bool of all categories to true
+    for cate in game.score:
+        game.score[cate]["scored"] = True
+
+    # Game is now over
+    p.assertTrue(game.is_game_over(), "Game is over test")
+
 
 if __name__ == "__main__":
     p = Pest()
@@ -148,5 +179,6 @@ if __name__ == "__main__":
     score_test(p)
     update_score_test(p)
     parse_input_test(p)
+    is_game_over_test(p)
 
     p.run()
