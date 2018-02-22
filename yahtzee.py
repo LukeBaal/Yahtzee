@@ -16,6 +16,7 @@ class Game:
             "long straight": {"value": 0, "scored": False},
             "chance": {"value": 0, "scored": False},
             "yahtzee": {"value": 0, "scored": False},
+            "bonus": {"value": 0, "scored": False}
         }
         self.held = []
         self.pot = []
@@ -106,5 +107,19 @@ class Game:
         else:
             self.score[cate]["value"] = score
             self.score[cate]["scored"] = True
+
+            # If the total of the number categories is 63 or more, get 35 bonus pts
+            if not self.score["bonus"]["scored"]:
+                if cate == "ones" or cate == "twos" or cate == "threes" or cate == "fours" or cate == "fives" or cate == "sixs":
+                    subtotal = 0
+                    subtotal += self.score["ones"]["value"]
+                    subtotal += self.score["twos"]["value"]
+                    subtotal += self.score["threes"]["value"]
+                    subtotal += self.score["fours"]["value"]
+                    subtotal += self.score["fives"]["value"]
+                    subtotal += self.score["sixs"]["value"]
+                    if subtotal > 63:
+                        self.score["bonus"]["value"] = 35
+                        self.score["bonus"]["scored"] = True
         
         return True

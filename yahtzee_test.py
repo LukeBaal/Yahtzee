@@ -115,6 +115,14 @@ def update_score_test(p):
     p.assertFalse(game.update_score(cate, score), "Yahtzee scored attempt after scratch test")
     p.assertEquals(game.score[cate]["value"], 0, "Yahtzee score after atempt after scratch test")
 
+    # Bonus pts test
+    p.assertEquals(game.score[cate]["value"], 0, "No bonus test")
+    game.score["sixs"]["value"] = 30
+    game.score["fives"]["value"] = 25
+    p.assertTrue(game.update_score("fours", 20), "Update fours for bonus test")
+    cate = "bonus"
+    p.assertEquals(game.score[cate]["value"], 35, "Bonus score test")
+
 
 if __name__ == "__main__":
     p = Pest()
