@@ -12,60 +12,84 @@ class Game:
             "3 of a kind": {"value": 0, "scored": False},
             "4 of a kind": {"value": 0, "scored": False},
             "full house": {"value": 0, "scored": False},
-            "short straight": {"value": 0, "scored": False},
-            "long straight": {"value": 0, "scored": False},
+            "small straight": {"value": 0, "scored": False},
+            "large straight": {"value": 0, "scored": False},
             "chance": {"value": 0, "scored": False},
             "yahtzee": {"value": 0, "scored": False},
             "bonus": {"value": 0, "scored": False}
         }
         self.pot = [0]*5
-        self.held = [False]*5
         self.roll_num = 1
 
-    # def new_round(self):
-    #     self.roll_num = 1
-    #     self.roll()
+    def new_round(self):
+        self.roll_num = 1
+        self.roll([1, 2, 3, 4, 5])
 
-    #     # Ask user to hold or score
-    #     valid = False
-    #     while not valid:
-    #         option = input("Hold dice or store?")
-    #         valid, cmd, args = self.parse_input(option)
+        # Ask user to hold or score
+        cmd = None
+        while cmd == None:
+            print("Roll #%d:%s" %(self.roll_num, self.pot))
+            user_input = input("Roll dice or score?")
+            cmd, args = self.parse_input(user_input)
+            # If on the third roll, don't accept a hold command
+            # since user must score
+            if self.roll_num == 3 and cmd == "roll":
+                print("No rolls left, must score!\n")
+                cmd = None
+            elif cmd == "roll":
+                # If command is roll, roll only the given dice
+                self.roll(args)
+                self.roll_num += 1                
+                cmd = None
+            elif cmd == "score":
+                # If command is score, determine score for category
+                # defined by args. Then ask user for confirmation
+                # If not confirmed, prompt for new command
+                score = self.get_score(args)
+                confirm = input("Score %d pts for %s? (Yes/no)" %(self.get_score(args), args))
+                if confirm == "Yes" or confirm == "y" or confirm == "yes" or confirm == "Y":
+                    self.update_score(args, score)
+                else:
+                    cmd = None
         
-                
 
     def parse_input(self, option):
         valid = False
         if option == "help":
-            print("Hold: ex. hold 1 2 4, will hold dice 1, 2, and 4")
-            print("Score: ex score full house, will show the score for a full house with current dice")
+            print("\nHelp:\
+                  \nReroll (keep none): 'hold'\
+                  \nHold: ex. 'hold 1 2 4', will hold dice 1, 2, and 4 \
+                  \nScore: ex 'score full house', will show the score for a full house with current dice\n")
         else:
             cmd = option.split(" ")
-            if cmd[0] == "score" or cmd[0] == "hold":
+            if cmd[0] == "score" or cmd[0] == "roll":
                 if cmd[0] == "score":
                     args = ' '.join(cmd[1:])
                     try:
                         if self.score[args]:
                             valid = True
                     except KeyError:
-                        print("Invalid score category!")
+                        print("Invalid score category!\n")
                 else:
-                    args = cmd[1: ]
-                    for i in range(len(args)):
-                        try: 
-                            args[i] = int(args[i])
-                            valid = True
-                        except ValueError:
-                            print("Must use numbers to define which dice to keep!")
+                    if len(cmd) > 1:
+                        args = cmd[1: ]
+                        for i in range(len(args)):
+                            try: 
+                                args[i] = int(args[i])
+                                valid = True
+                            except ValueError:
+                                print("Must use numbers to define which dice to keep!\n")
+                    else:
+                        args = None
+                        valid = True
         if valid:
             return cmd[0], args
         else:
             return None, None
-    def roll(self):
-        self.roll_num += 1
-        for i in range(len(self.held)):
-            if not self.held[i]:
-                self.pot[i] = randint(1, 6)
+    
+    def roll(self, to_roll):
+        for index in to_roll:
+            self.pot[index-1] = randint(1, 6)
         
 
     def get_score(self, cate):
@@ -118,20 +142,20 @@ class Game:
                     triplet = True
             if pair and triplet:
                 score = 25
-        elif cate == "short straight" or cate == "long straight":
+        elif cate == "small straight" or cate == "large straight":
             best = 0
             consecutive = 0
-            for i in tally:
-                if i > 0:
+            for count in tally:
+                if count > 0:
                     consecutive += 1
                     if consecutive > best:
                         best = consecutive
                 else:
                     consecutive = 0
 
-            if cate == "short straight" and best >= 4: # straight of 4, score = 30
+            if cate == "small straight" and best >= 4: # straight of 4, score = 30
                 score = 30
-            elif cate == "long straight" and best >= 5: # straight of 5, score = 40
+            elif cate == "large straight" and best >= 5: # straight of 5, score = 40
                 score = 40
         elif cate == "yahtzee": # 5 of a kind, score = 50
             for i in tally:
@@ -168,7 +192,7 @@ class Game:
         
         return True
 
-    def hold(self, to_hold):
-        self.held = [False]*5
-        for index in to_hold:
-            self.held[index] = True
+    # def hold(self, to_hold):
+    #     self.held = [False]*5
+    #     for index in to_hold:
+    #         self.held[index-1] = True
