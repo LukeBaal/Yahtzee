@@ -1,4 +1,4 @@
-import numpy as np
+from random import randint
 
 class Game:
     def __init__(self):
@@ -18,11 +18,55 @@ class Game:
             "yahtzee": {"value": 0, "scored": False},
             "bonus": {"value": 0, "scored": False}
         }
-        self.held = []
-        self.pot = []
+        self.pot = [0]*5
+        self.held = [False]*5
+        self.roll_num = 1
 
+    # def new_round(self):
+    #     self.roll_num = 1
+    #     self.roll()
+
+    #     # Ask user to hold or score
+    #     valid = False
+    #     while not valid:
+    #         option = input("Hold dice or store?")
+    #         valid, cmd, args = self.parse_input(option)
+        
+                
+
+    def parse_input(self, option):
+        valid = False
+        if option == "help":
+            print("Hold: ex. hold 1 2 4, will hold dice 1, 2, and 4")
+            print("Score: ex score full house, will show the score for a full house with current dice")
+        else:
+            cmd = option.split(" ")
+            if cmd[0] == "score" or cmd[0] == "hold":
+                if cmd[0] == "score":
+                    args = ' '.join(cmd[1:])
+                    try:
+                        if self.score[args]:
+                            valid = True
+                    except KeyError:
+                        print("Invalid score category!")
+                else:
+                    args = cmd[1: ]
+                    for i in range(len(args)):
+                        try: 
+                            args[i] = int(args[i])
+                            valid = True
+                        except ValueError:
+                            print("Must use numbers to define which dice to keep!")
+        if valid:
+            return cmd[0], args
+        else:
+            return None, None
     def roll(self):
-        return np.random.randint(1, 6, size=5 - len(self.held)).tolist()
+        self.roll_num += 1
+        for i in range(len(self.held)):
+            if not self.held[i]:
+                self.pot[i] = randint(1, 6)
+        
 
     def get_score(self, cate):
         score = 0
@@ -123,3 +167,8 @@ class Game:
                         self.score["bonus"]["scored"] = True
         
         return True
+
+    def hold(self, to_hold):
+        self.held = [False]*5
+        for index in to_hold:
+            self.held[index] = True

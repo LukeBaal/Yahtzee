@@ -10,27 +10,27 @@ def roll_test(p):
     game = Game()
     die = re.compile('[1-6]+')
     # New turn roll
-    results = game.roll()
+    game.roll()
     actual = True
-    if results is not None:
-        for result in results:
+    if game.pot is not None:
+        for result in game.pot:
             if not die.match(str(result)):
                 actual = False
-    elif results is not None or len(results) != 5:
+    elif game.pot is not None or len(game.pot) != 5:
         actual = False
 
     p.assertTrue(actual, "New Round roll")
 
-    game.held = [1, 1, 5]
-    results = game.roll()
+    game.held = [0, 1, 2]
+    game.roll()
     actual = True
 
     # Check if results were returned
-    if results is not None:
-        for result in results:
+    if game.pot is not None:
+        for result in game.pot:
             if not die.match(str(result)):
                 actual = False
-    elif results is None or len(results) != 3:
+    elif game.pot is None or len(game.pot) != 3:
         actual = False
 
     p.assertTrue(actual, "Roll returned 3 integers between 1 and 6")
@@ -77,7 +77,6 @@ def score_test(p):
     game.pot = [3, 3, 2, 4, 1]
     p.assertEquals(game.get_score("yahtzee"), 0, "Invalid yahtzee score test")
 
-
 def update_score_test(p):
     game = Game()
 
@@ -123,6 +122,34 @@ def update_score_test(p):
     cate = "bonus"
     p.assertEquals(game.score[cate]["value"], 35, "Bonus score test")
 
+def hold_test(p):
+    game = Game()
+    game.pot = game.roll()
+    # hold dice 0, 1, and 2
+    game.pot = [2, 2, 4, 1, 4]
+    game.hold([0, 1, 2, 4])
+    # Should reroll only 1 die (die 3)
+    game.roll()
+    p.assertEquals(game.pot[:3] + [game.pot[4]], [2, 2, 4, 4], "Reroll does not change held dice test")
+    
+def parse_input_test(p):
+    game = Game()
+
+    # Valid hold command
+    text = "hold 1 2 4"
+    p.assertEquals(game.parse_input(text), ("hold", [1, 2, 4]), "Valid hold command test")
+
+    # Invalid hold command
+    text = "hold 1,2,4"
+    p.assertEquals(game.parse_input(text), (None, None), "Invalid hold command test")
+
+    # Valid score command
+    text = "score full house"
+    p.assertEquals(game.parse_input(text), ("score", "full house"), "Valid score command test")
+
+    # Invalid score command
+    text = "score 1 2 4"
+    p.assertEquals(game.parse_input(text), (None, None), "Invalid score command test")
 
 if __name__ == "__main__":
     p = Pest()
@@ -130,5 +157,7 @@ if __name__ == "__main__":
     roll_test(p)
     score_test(p)
     update_score_test(p)
+    hold_test(p)
+    parse_input_test(p)
 
     p.run()
