@@ -39,13 +39,24 @@ class Game:
                 cmd = None
             elif cmd == "roll":
                 # If command is roll, roll only the given dice
-                self.roll(args)
+                if args:
+                    self.roll(args)
+                else:
+                    self.roll([1, 2, 3, 4, 5])
+
                 self.roll_num += 1
                 cmd = None
             elif cmd == "score":
                 # If command is score, determine score for category
                 # defined by args. Then ask user for confirmation
                 # If not confirmed, prompt for new command
+                
+                # If category has already been scored, can't score again, unless yahtzee
+                if self.score[args]["scored"] and args != "yahtzee":
+                    cmd = None
+                    print("Already scored for %s" % args)
+                    continue
+
                 score = self.get_score(args)
                 confirm = input("Score %d pts for %s? (Yes/no)" %
                                 (self.get_score(args), args))
@@ -58,8 +69,8 @@ class Game:
         valid = False
         if option == "help":
             print("\nHelp:\
-                   \nReroll (keep none): 'hold'\
-                   \nHold: ex. 'hold 1 2 4', will hold dice 1, 2, and 4 \
+                   \nReroll (keep none): 'roll'\
+                   \nHold: ex. 'roll 1 2 4', will roll dice 1, 2, and 4 \
                    \nScore: ex 'score full house', will show the score for a full house with current dice\n")
         else:
             cmd = option.split(" ")
@@ -95,6 +106,10 @@ class Game:
 
     def get_score(self, cate):
         score = 0
+
+        # If category is already scored, ignore it (except for yahtzees)
+        if self.score[cate]["scored"] and cate != "yahtzee":
+            return 0
 
         # Count number of each value on a 6-sided die
         tally = [0] * 6
@@ -201,7 +216,13 @@ class Game:
 
     def get_final_score(self):
         total = 0
+        result = []
         for cate in self.score:
             total += self.score[cate]["value"]
-            print("Category: %s, Score: %d\n" %(cate, self.score[cate]["value"]))
-        print("Total Score: %d" % total)
+            result.append("%s: %d" %(cate, self.score[cate]["value"]))
+        return result, "Total Score: %d" % total
+
+    def run_game(self):
+        while not self.is_game_over():
+            self.new_round()
+        # print(self.get_final_score())

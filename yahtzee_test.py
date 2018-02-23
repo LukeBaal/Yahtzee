@@ -3,7 +3,7 @@ import re
 import numpy as np
 
 from PyTest.pest_control import Pest
-from yahtzee import Game
+from yahtzee.game import Game
 
 
 def roll_test(p):
