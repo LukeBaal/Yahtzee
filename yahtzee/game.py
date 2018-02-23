@@ -1,5 +1,5 @@
 from random import randint
-
+from .print_board import print_pot, print_results
 
 class Game:
     def __init__(self):
@@ -29,7 +29,9 @@ class Game:
         # Ask user to hold or score
         cmd = None
         while cmd == None:
-            print("Roll #%d:%s" % (self.roll_num, self.pot))
+            # print("Roll #%d:%s" % (self.roll_num, self.pot))
+            print("Roll #%d" %self.roll_num)
+            print_pot(self.pot)
             user_input = input("Roll dice or score?")
             cmd, args = self.parse_input(user_input)
             # If on the third roll, don't accept a hold command
@@ -71,10 +73,12 @@ class Game:
             print("\nHelp:\
                    \nReroll (keep none): 'roll'\
                    \nHold: ex. 'roll 1 2 4', will roll dice 1, 2, and 4 \
-                   \nScore: ex 'score full house', will show the score for a full house with current dice\n")
+                   \nScore: ex 'score full house', will show the score for a full house with current dice\
+                   \npoints: print current results")
+
         else:
             cmd = option.split(" ")
-            if cmd[0] == "score" or cmd[0] == "roll":
+            if cmd[0] == "score" or cmd[0] == "roll" or cmd[0] == "points":
                 if cmd[0] == "score":
                     args = ' '.join(cmd[1:])
                     try:
@@ -82,6 +86,9 @@ class Game:
                             valid = True
                     except KeyError:
                         print("Invalid score category!\n")
+                elif cmd[0] == "points":
+                    result, subtotal, total = self.get_current_score() 
+                    print_results(result, subtotal, total)
                 else:
                     if len(cmd) > 1:
                         args = cmd[1:]
@@ -138,7 +145,7 @@ class Game:
             if not three:
                 score = 0
         elif cate == "4 of a kind":  # Four of kind, score = sum of all dice
-            four = True
+            four = False
             for i in range(len(tally)):
                 if tally[i] >= 4:
                     four = True
@@ -176,7 +183,10 @@ class Game:
         elif cate == "yahtzee":  # 5 of a kind, score = 50
             for i in tally:
                 if i == 5:
-                    score = 50
+                    if not self.score[cate]["scored"]:
+                        score = 50
+                    else:
+                        score = 100
 
         return score
 
@@ -210,17 +220,20 @@ class Game:
 
     def is_game_over(self):
         for cate in self.score:
-            if not self.score[cate]["scored"]:
+            if not self.score[cate]["scored"] and cate != "bonus":
                 return False
         return True
 
-    def get_final_score(self):
+    def get_current_score(self):
+        subtotal = 0
         total = 0
         result = []
         for cate in self.score:
             total += self.score[cate]["value"]
-            result.append("%s: %d" %(cate, self.score[cate]["value"]))
-        return result, "Total Score: %d" % total
+            if cate == "sixs":
+                subtotal = total
+            result.append("%s: %2d" %(cate, self.score[cate]["value"]))
+        return result, subtotal, total
 
     def run_game(self):
         while not self.is_game_over():
