@@ -32,7 +32,7 @@ class Game:
             # print("Roll #%d:%s" % (self.roll_num, self.pot))
             print("Roll #%d" %self.roll_num)
             print_pot(self.pot)
-            user_input = input("Roll dice or score?")
+            user_input = input("Enter a command: ")
             cmd, args = self.parse_input(user_input)
             # If on the third roll, don't accept a hold command
             # since user must score
@@ -60,7 +60,7 @@ class Game:
                     continue
 
                 score = self.get_score(args)
-                confirm = input("Score %d pts for %s? (Yes/no)" %
+                confirm = input("Score %d pts for %s? (Yes/no) " %
                                 (self.get_score(args), args))
                 if confirm == "Yes" or confirm == "y" or confirm == "yes" or confirm == "Y":
                     self.update_score(args, score)
@@ -236,6 +236,11 @@ class Game:
         return result, subtotal, total
 
     def run_game(self):
+        print("Commands:\
+               \n'hold <dice #s>': hold dice\
+               \n'score <category>': score for given category\
+               \n'points': show current core breakdown\
+               \n'help': show help")
         while not self.is_game_over():
             self.new_round()
         # print(self.get_final_score())
