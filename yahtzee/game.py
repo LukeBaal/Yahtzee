@@ -1,5 +1,13 @@
+import sys
 from random import randint
+
 from .print_board import print_pot, print_results
+
+
+def eprint(*args, **kwargs):
+    """Print to stderr"""
+    print(*args, file=sys.stderr, **kwargs)
+
 
 class Game:
     def __init__(self):
@@ -19,7 +27,7 @@ class Game:
             "yahtzee": {"value": 0, "scored": False},
             "bonus": {"value": 0, "scored": False}
         }
-        self.pot = [0]*5
+        self.pot = [0] * 5
         self.roll_num = 1
 
     def new_round(self):
@@ -30,14 +38,14 @@ class Game:
         cmd = None
         while cmd == None:
             # print("Roll #%d:%s" % (self.roll_num, self.pot))
-            print("Roll #%d" %self.roll_num)
+            print("Roll #%d" % self.roll_num)
             print_pot(self.pot)
             user_input = input("Enter a command: ")
             cmd, args = self.parse_input(user_input)
             # If on the third roll, don't accept a hold command
             # since user must score
             if self.roll_num == 3 and cmd == "roll":
-                print("No rolls left, must score!\n")
+                eprint("No rolls left, must score!\n")
                 cmd = None
             elif cmd == "roll":
                 # If command is roll, roll only the given dice
@@ -52,11 +60,11 @@ class Game:
                 # If command is score, determine score for category
                 # defined by args. Then ask user for confirmation
                 # If not confirmed, prompt for new command
-                
+
                 # If category has already been scored, can't score again, unless yahtzee
                 if self.score[args]["scored"] and args != "yahtzee":
                     cmd = None
-                    print("Already scored for %s" % args)
+                    eprint("Already scored for %s" % args)
                     continue
 
                 score = self.get_score(args)
@@ -85,9 +93,9 @@ class Game:
                         if self.score[args]:
                             valid = True
                     except KeyError:
-                        print("Invalid score category!\n")
+                        eprint("Invalid score category!\n")
                 elif cmd[0] == "points":
-                    result, subtotal, total = self.get_current_score() 
+                    result, subtotal, total = self.get_current_score()
                     print_results(result, subtotal, total)
                 else:
                     if len(cmd) > 1:
@@ -97,7 +105,7 @@ class Game:
                                 args[i] = int(args[i])
                                 valid = True
                             except ValueError:
-                                print(
+                                eprint(
                                     "Must use numbers to define which dice to keep!\n")
                     else:
                         args = None
@@ -109,7 +117,7 @@ class Game:
 
     def roll(self, to_roll):
         for index in to_roll:
-            self.pot[index-1] = randint(1, 6)
+            self.pot[index - 1] = randint(1, 6)
 
     def get_score(self, cate):
         score = 0
@@ -121,7 +129,7 @@ class Game:
         # Count number of each value on a 6-sided die
         tally = [0] * 6
         for die in self.pot:
-            tally[die-1] += 1
+            tally[die - 1] += 1
 
         # For number categories, score = sum of matching number (ie. 3 2's for twos = 6 pts)
         if cate == "ones":
@@ -232,7 +240,7 @@ class Game:
             total += self.score[cate]["value"]
             if cate == "sixs":
                 subtotal = total
-            result.append("%s: %2d" %(cate, self.score[cate]["value"]))
+            result.append("%s: %2d" % (cate, self.score[cate]["value"]))
         return result, subtotal, total
 
     def run_game(self):
