@@ -53,7 +53,6 @@ class Game:
                     self.roll(args)
                 else:
                     self.roll([1, 2, 3, 4, 5])
-
                 self.roll_num += 1
                 cmd = None
             elif cmd == "score":
@@ -103,10 +102,14 @@ class Game:
                         for i in range(len(args)):
                             try:
                                 args[i] = int(args[i])
-                                valid = True
+                                if args[i] >= 1 and args[i] <= 6: 
+                                    valid = True
+                                else:
+                                    valid = False
+                                    eprint("Must use numbers between 1 and 6 to definer which dice to roll!\n")
                             except ValueError:
                                 eprint(
-                                    "Must use numbers to define which dice to keep!\n")
+                                    "Must use numbers between 1 and 6 to define which dice to roll!\n")
                     else:
                         args = None
                         valid = True
