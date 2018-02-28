@@ -44,8 +44,8 @@ jobs:
             python yahtzee_test.py
       
       - run:
-        name: make test-reports directory
-        command: mkdir test-reports
+          name: make test-reports directory
+          command: mkdir test-reports
 
       - store_test_results:
           path: test-reports
