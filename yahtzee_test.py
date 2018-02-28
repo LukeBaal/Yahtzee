@@ -1,8 +1,6 @@
 import re
 import sys
 
-import numpy as np
-
 from pestcontrol.pest_control import PestCase
 from yahtzee.game import Game
 

@@ -41,6 +41,6 @@ jobs:
             python yahtzee_test.py
 
       - store_artifacts:
-          path: test-reports
-          destination: test-reports
+          path: results.xml
+          destination: results.xml
           
