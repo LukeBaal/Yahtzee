@@ -50,7 +50,7 @@ class YahtzeeTest(PestCase):
 
         # 3 2's = 6 pts
         game.pot = [1, 2, 2, 2, 4]
-        self.assertEquals(game.get_score("twos"), 0, "3 2's score test")
+        self.assertEquals(game.get_score("twos"), 6, "3 2's score test")
 
         # 3 2's, 0 5's for 5's = 0 pts
         self.assertEquals(game.get_score("fives"), 0, "0 5's score test")
