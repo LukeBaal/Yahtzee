@@ -1,5 +1,5 @@
 <testsuites name="PestCase Tests">
-	<testsuite name="testsuite" tests="5" failures="0" time="0.00040650367736816406">
+	<testsuite name="testsuite" tests="5" failures="0" time="0.00045800209045410156">
 	<testcase classname="is_game_over_test" time="0.000000">
 	
 </testcase>
@@ -10,8 +10,7 @@
 	
 </testcase>
 <testcase classname="score_test" time="0.000000">
-	<failure message="0 5's score test"></failure>
-
+	
 </testcase>
 <testcase classname="update_score_test" time="0.000000">
 	
