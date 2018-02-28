@@ -23,6 +23,11 @@ jobs:
           - v1-dependencies-
 
       - run:
+		  name: install pestcontrol submodule
+		  command: |
+			git submodule init
+			git submodule update
+
           name: install dependencies
           command: |
             python3 -m venv venv
