@@ -1,4 +1,4 @@
-# Yahtzee
+# Yahtzee [![CircleCI](https://circleci.com/gh/LukeBaal/Yahtzee.svg?style=svg&circle-token=55421af71314cc9cb18856c582b34bb4b3a0e40d)](https://circleci.com/gh/LukeBaal/Yahtzee)
 A CLI version of the dice game Yahtzee with a custom unit testing library
 
 
