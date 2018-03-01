@@ -1,7 +1,7 @@
 import re
 import sys
 
-from pestcontrol.pest_control import PestCase
+import pestcontrol
 from yahtzee.game import Game
 
 
@@ -15,7 +15,7 @@ class NullDevice:
         pass
 
 
-class YahtzeeTest(PestCase):
+class YahtzeeTest(pestcontrol.PestCase):
     def roll_test(self):
         game = Game()
         die = re.compile('[1-6]+')
