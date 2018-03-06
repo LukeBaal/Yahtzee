@@ -1,6 +1,3 @@
-from colorama import Fore, Back, Style, init
-
-init()
 
 TOP_LEFT = '\U0000250F'
 TOP_RIGHT = '\U00002513'
@@ -75,10 +72,8 @@ def print_results(results, subtotal, total):
 def print_pot(pot):
     dice = [ONE, TWO, THREE, FOUR, FIVE, SIX]
     row = ""
-    # print(Fore.BLACK, Back.WHITE)
     for i in range(5):
         for die in pot:
             row += dice[die - 1][i]
         print(row)
         row = ""
-    # print(Style.RESET_ALL)
