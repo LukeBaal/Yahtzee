@@ -17,6 +17,7 @@ class NullDevice:
 
 class YahtzeeTest(pestcontrol.PestCase):
     def roll_test(self):
+        """ Test roll command """
         game = Game()
         die = re.compile('[1-6]+')
         # New turn roll
@@ -46,6 +47,7 @@ class YahtzeeTest(pestcontrol.PestCase):
         self.assertTrue(actual, "Roll returned 3 integers between 1 and 6")
 
     def score_test(self):
+        """  Test score command """
         game = Game()
 
         # 3 2's = 6 pts
@@ -58,13 +60,20 @@ class YahtzeeTest(pestcontrol.PestCase):
         # 3 of a kind
         self.assertEquals(game.get_score("3 of a kind"),
                           11, "3 of a kind test")
+        game.pot = [1, 1, 3, 4, 4]
+        self.assertEquals(game.get_score("3 of a kind"),
+                          0, "Invalid 3 of a kind test")
 
         # 4 of a kind
+        self.assertEquals(game.get_score("4 of a kind"),
+                          0, "Invalid 4 of a kind test")
         game.pot = [3, 3, 3, 3, 1]
         self.assertEquals(game.get_score("4 of a kind"),
                           13, "4 of a kind test")
 
         # Full House
+        self.assertEquals(game.get_score("full house"),
+                          0, "Invalid full house test")
         game.pot = [5, 5, 6, 6, 6]
         self.assertEquals(game.get_score("full house"), 25, "Full house test")
 
