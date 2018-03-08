@@ -31,13 +31,13 @@ class Game:
         self.roll_num = 1
 
     def new_round(self):
+        """ Start a new round """
         self.roll_num = 1
         self.roll([1, 2, 3, 4, 5])
 
         # Ask user to hold or score
         cmd = None
         while cmd == None:
-            # print("Roll #%d:%s" % (self.roll_num, self.pot))
             print("Roll #%d" % self.roll_num)
             print_pot(self.pot)
             user_input = input("Enter a command: ")
@@ -75,6 +75,7 @@ class Game:
                     cmd = None
 
     def parse_input(self, option):
+        """ Parse user input """
         valid = False
         if option == "help":
             print("\nHelp:\
@@ -102,11 +103,12 @@ class Game:
                         for i in range(len(args)):
                             try:
                                 args[i] = int(args[i])
-                                if args[i] >= 1 and args[i] <= 6: 
+                                if args[i] >= 1 and args[i] <= 6:
                                     valid = True
                                 else:
                                     valid = False
-                                    eprint("Must use numbers between 1 and 6 to definer which dice to roll!\n")
+                                    eprint(
+                                        "Must use numbers between 1 and 6 to definer which dice to roll!\n")
                             except ValueError:
                                 eprint(
                                     "Must use numbers between 1 and 6 to define which dice to roll!\n")
@@ -119,10 +121,12 @@ class Game:
             return None, None
 
     def roll(self, to_roll):
+        # Roll the dice at the given indexs
         for index in to_roll:
             self.pot[index - 1] = randint(1, 6)
 
     def get_score(self, cate):
+        """ Calculate the score for the given category, with the current dice"""
         score = 0
 
         # If category is already scored, ignore it (except for yahtzees)
@@ -202,6 +206,7 @@ class Game:
         return score
 
     def update_score(self, cate, score):
+        """ Update the score of the given category """
         # Only yahtzees can be score multiple times
         if self.score[cate]["scored"]:
             # Additional yahtzees are worth 100 pts (if first yahtzee was valid)
@@ -230,12 +235,14 @@ class Game:
         return True
 
     def is_game_over(self):
+        """ Check if game is over (all categories have been scored) """
         for cate in self.score:
             if not self.score[cate]["scored"] and cate != "bonus":
                 return False
         return True
 
     def get_current_score(self):
+        """ Log Category score, calculate subtotal and total scores """
         subtotal = 0
         total = 0
         result = []
@@ -247,11 +254,11 @@ class Game:
         return result, subtotal, total
 
     def run_game(self):
-        print("Commands:\
-               \n'hold <dice #s>': hold dice\
-               \n'score <category>': score for given category\
-               \n'points': show current core breakdown\
-               \n'help': show help")
+        """ Print help screen and keep starting a new round until game is over """
+        print("\nHelp:\
+                   \nReroll (keep none): 'roll'\
+                   \nHold: ex. 'roll 1 2 4', will roll dice 1, 2, and 4 \
+                   \nScore: ex 'score full house', will show the score for a full house with current dice\
+                   \npoints: print current results")
         while not self.is_game_over():
             self.new_round()
-        # print(self.get_final_score())
