@@ -10,3 +10,14 @@ Clone this repo
 ```
 NOTE: the --recurse-submodule flag is needed to properly install the custom unit testing library, pest control.
 If you do not intend to run the unit testing, then the flag is not needed
+
+## How to play
+
+For rules on how to play the game Yahtzee refer to:
+https://en.wikipedia.org/wiki/Yahtzee
+
+
+To start the game run with terminal in the directory of the repo:
+```python main.py```
+
+NOTE: MUST use python 3.x
