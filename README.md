@@ -11,6 +11,11 @@ Clone this repo
 NOTE: the --recurse-submodule flag is needed to properly install the custom unit testing library, pest control.
 If you do not intend to run the unit testing, then the flag is not needed
 
+Next cd into the directory and run the following command to install dependencies (assuming pip is installed)
+``` pip install -r requirements.txt ```
+If the above command fails try:
+``` pip install colorama ```
+to install the dependency directly 
 ## How to play
 
 For rules on how to play the game Yahtzee refer to:
