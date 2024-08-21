@@ -83,6 +83,8 @@ class Game:
                    \nHold: ex. 'roll 1 2 4', will roll dice 1, 2, and 4 \
                    \nScore: ex 'score full house', will show the score for a full house with current dice\
                    \npoints: print current results")
+        if option == "quit" or option == "q":
+            sys.exit(0)
 
         else:
             cmd = option.split(" ")
@@ -123,6 +125,8 @@ class Game:
     def roll(self, to_roll):
         # Roll the dice at the given indexs
         for index in to_roll:
+            if index < 0 or index > 6:
+                continue
             self.pot[index - 1] = randint(1, 6)
 
     def get_score(self, cate):
